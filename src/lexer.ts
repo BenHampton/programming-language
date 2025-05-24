@@ -1,41 +1,10 @@
+import fs from 'fs';
+import { Token, TokenType } from './types';
+import { KEYWORDS } from './constants';
+import { token, isInteger, isAlpha, isSkippable } from './utils';
+
 //let x = 45 + ( foo + bar )
 // [ letToken, IdentifierTk, EqualsToken, NumberToken ]
-
-export enum TokenType {
-    Number,
-    Identifier,
-    Equals,
-    OpenParen, CloseParen,
-    BinaryOperator,
-    Let,
-}
-
-const KEYWORDS: Record<string, TokenType> = {
-    'let': TokenType.Let,
-}
-
-export interface Token {
-    value: string
-    type: TokenType
-}
-
-function token (value = '', type: TokenType): Token {
-    return {value, type}
-}
-
-function isAlpha (src: string) {
-    return src.toLocaleUpperCase() != src.toLocaleLowerCase();
-}
-
-function isInteger (src: string) {
-   const c = src.charCodeAt(0);
-   const bounds = ['0'.charCodeAt(0), '9'.charCodeAt(0)];
-   return (c >= bounds[0] && c <= bounds[1]);
-}
-
-function isSkippable (str: string) {
-    return str == ' ' || str == '\n' || str == '\t'
-}
 
 export function tokenize (sourceCode: string): Token[] {
 
@@ -88,7 +57,8 @@ export function tokenize (sourceCode: string): Token[] {
                 src.shift()
             } else {
                 console.log('unreconized character found in source: ', src[0])
-                Deno.exit(1)
+                // Deno.exit(1)
+                process.exit(1)
             }
 
         }
@@ -97,7 +67,8 @@ export function tokenize (sourceCode: string): Token[] {
     return tokens
 }
 
-const source = await Deno.readTextFile('./test.txt')
+// const source = await Deno.readTextFile('./test.txt')
+const source = fs.readFileSync('./testFile/test.txt', 'utf8');
 
 for (const token of tokenize(source)) {
     console.log(token)

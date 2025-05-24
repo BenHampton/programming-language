@@ -1,0 +1,57 @@
+node_modules/
+.npmrc
+.vscode/*
+!.vscode/extensions.json
+.vs
+settings.json
+.env
+.DS_Store
+secrets.json
+
+# Locally built files
+dist
+dist-ssr
+*.local
+*.config.d.ts
+*.tsbuildinfo
+vite.config.js
+vitest.config.js
+cypress.config.js
+
+# Cypress output
+cypress/videos/
+cypress/screenshots/
+**/__image_snapshots_local__
+
+
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+>>>>>>> bd55dbad29007a579ea8706113f788a7492e20cd
