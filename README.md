@@ -1,0 +1,1 @@
+ run: 'deno run -A lexer.ts'
