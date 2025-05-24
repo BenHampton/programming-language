@@ -10,6 +10,7 @@ export function tokenize (sourceCode: string): Token[] {
 
     const tokens = new Array<Token>();
     const src = sourceCode.split('');
+    console.log('src: ', src)
 
 
     //build each token until end of file
@@ -46,17 +47,17 @@ export function tokenize (sourceCode: string): Token[] {
 
                 //check for reserved keywords
                 const reserved = KEYWORDS[identifier]
-                if ( reserved === undefined ) {
-
-                    tokens.push(token(identifier, TokenType.Identifier));
-                } else {
-                    tokens.push(token(identifier, reserved));
-                }
+                if (reserved) {
+					tokens.push(token(identifier, reserved));
+				} else {
+					// Unreconized name must mean user defined symbol.
+					tokens.push(token(identifier, TokenType.Identifier));
+				}
             } else if (isSkippable(src[0])) {
                 //skip character
                 src.shift()
             } else {
-                console.log('unreconized character found in source: ', src[0])
+                console.log('unrecgonized character found in source: ', src[0])
                 // Deno.exit(1)
                 process.exit(1)
             }
@@ -68,7 +69,7 @@ export function tokenize (sourceCode: string): Token[] {
 }
 
 // const source = await Deno.readTextFile('./test.txt')
-const source = fs.readFileSync('./testFile/test.txt', 'utf8');
+const source = fs.readFileSync('src/testFile/test.txt', 'utf8');
 
 for (const token of tokenize(source)) {
     console.log(token)
