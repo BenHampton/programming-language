@@ -1,4 +1,5 @@
 import fs from 'fs';
+// import * as fs from 'fs';
 import { Token, TokenType } from './types';
 import { KEYWORDS } from './constants';
 import { token, isInteger, isAlpha, isSkippable } from './utils';
@@ -10,7 +11,7 @@ export function tokenize (sourceCode: string): Token[] {
 
     const tokens = new Array<Token>();
     const src = sourceCode.split('');
-    console.log('src: ', src)
+    // console.log('src: ', src)
 
 
     //build each token until end of file
@@ -64,13 +65,14 @@ export function tokenize (sourceCode: string): Token[] {
 
         }
     }
-
+    
+    tokens.push({ type: TokenType.EOF, value: 'EndOfFile' });
     return tokens
 }
 
 // const source = await Deno.readTextFile('./test.txt')
 const source = fs.readFileSync('src/testFile/test.txt', 'utf8');
 
-for (const token of tokenize(source)) {
-    console.log(token)
-}
+// for (const token of tokenize(source)) {
+//     console.log(token)
+// }

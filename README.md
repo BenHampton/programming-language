@@ -6,4 +6,4 @@ npm versions:
 run Deno:  
     - deno run -A lexer.ts
 run Node:    
-    - ts-node lexer.ts
+    - ts-node src/lexer.ts
