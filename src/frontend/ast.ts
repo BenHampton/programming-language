@@ -1,6 +1,7 @@
 export type NodeType = 
 'Program' | 
 'NumericLiteral' | 
+'NullLiteral' | 
 'Identifier' | 
 'BinaryExpr' | 
 'CallExpr' | 
@@ -9,17 +10,17 @@ export type NodeType =
 
 
 //statments will not return a value
-export interface Stmt {
+export interface Statement {
     kind: NodeType,
 }
 
-export interface Program extends Stmt {
+export interface Program extends Statement {
     kind: 'Program';
-    body: Stmt[];
+    body: Statement[];
 }
 
-//extends Stmt
-export interface Expr extends Stmt {
+//extends Statement
+export interface Expr extends Statement {
 }
 
 export interface BinaryExpr extends Expr {
@@ -37,4 +38,9 @@ export interface Identifier extends Expr {
 export interface NumericLiteral extends Expr {
     kind: 'NumericLiteral'
     value: number;
+}
+
+export interface NullLiteral extends Expr {
+    kind: 'NullLiteral'
+    value: 'null';
 }

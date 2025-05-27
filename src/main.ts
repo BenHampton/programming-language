@@ -1,4 +1,5 @@
 import Parser from './frontend/parser';
+import { evaluate } from './runtime/interpreter';
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 const util = require('util');
@@ -27,6 +28,9 @@ async function main() {
             
             const program = parser.produceAST(input);
             console.log(util.inspect(program, { depth: null, colors: true }));
+
+            const result = evaluate(program)
+            console.log(result);
         }
     } catch (e) {
         console.log('Exceptin occurred: ', e);

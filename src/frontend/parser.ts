@@ -1,12 +1,12 @@
-import  { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier } from './ast'
-import { Token, TokenType } from './types'
+import  { Statement, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral } from './ast'
+import { Token, TokenType } from '../util/types'
 import { tokenize } from './lexer'
 
 export default class Parser {
 
     private tokens: Token[] = []
 
-    private not_eof(): boolean {
+    private notEOF(): boolean {
         return this.tokens[0].type != TokenType.EOF;
     }
 
@@ -24,6 +24,15 @@ export default class Parser {
         return prev;
     }
 
+    private expect(type: TokenType, message: string) {
+        const prev = this.tokens.shift() as Token;
+        if (!prev  || prev.type != type) {
+            console.error('Parser Error. Expected Type: '+ type +' \n', message)
+            process.exit(1)
+        }
+        return prev;
+    }
+
     public produceAST(sourceCode: string): Program {
 
         this.tokens = tokenize(sourceCode)
@@ -33,16 +42,16 @@ export default class Parser {
         };
 
         //parse until end of file
-        while (this.not_eof()) {
-            program.body.push(this.parse_stmt());
+        while (this.notEOF()) {
+            program.body.push(this.parseStatment());
         }
         
         return program;
     }
 
-    private parse_stmt(): Stmt {
-        // skip to parse_expr
-        return this.parse_expr();
+    private parseStatment(): Statement {
+        // skip to parseExpression
+        return this.parseExpression();
     }
 
         /*Order of Prescidence:
@@ -57,23 +66,23 @@ export default class Parser {
         - PrimaryExpr
     */
 
-    private parse_expr(): Expr {
-        return this.parse_additive_expr();
+    private parseExpression(): Expr {
+        return this.parseAdditiveExpression();
     }
 
     /* exmaples:
         ( 10 + - 5 ) - 5
         ( 10 + ( 10 - fooBar() ) ) - 5 
     */
-    private parse_additive_expr(): Expr {
+    private parseAdditiveExpression(): Expr {
         //parse left hand side to support recursive prescidence
-        let left = this.parse_primary_expr();
+        let left = this.parseMultipliciotaveExpression();
 
         while (this.at().value == '+' || this.at().value == '-') {
 
             const operator = this.eat().value;
-            const right = this.parse_primary_expr();
-            
+            const right = this.parseMultipliciotaveExpression();
+
             left = {
                 kind: 'BinaryExpr',
                 left,
@@ -85,7 +94,27 @@ export default class Parser {
         return left;
     }
 
-    private parse_primary_expr(): Expr {
+    private parseMultipliciotaveExpression(): Expr {
+        //parse left hand side to support recursive prescidence
+        let left = this.parsePrimaryExpression();
+
+        while (this.at().value == '/' || this.at().value == '*' || this.at().value == '%') {
+
+            const operator = this.eat().value;
+            const right = this.parsePrimaryExpression();
+
+            left = {
+                kind: 'BinaryExpr',
+                left,
+                right,
+                operator,
+            } as BinaryExpr;
+        }
+
+        return left;
+    }
+
+    private parsePrimaryExpression(): Expr {
 
         const tk = this.at().type;
         
@@ -95,15 +124,29 @@ export default class Parser {
                     kind: 'Identifier', 
                     symbol: this.eat().value 
                 } as Identifier;
+            case TokenType.Null:
+                this.eat(); //advance past null KEYWORD
+                return { 
+                    kind: 'NullLiteral', 
+                    value: 'null'
+                } as NullLiteral;
             case TokenType.Number:
                 return { 
                     kind: 'NumericLiteral', 
                     value: parseFloat(this.eat().value),
                  } as NumericLiteral;
+
+            case TokenType.OpenParen:
+                this.eat(); // eat the opening paren
+                const value = this.parseExpression();
+                 //closing paren
+                this.expect(
+                    TokenType.CloseParen, 
+                    "Unexpected token found inside of parenthesised expression. Expected clsoing parenthesis");
+                return value;
         
             default:
                 console.error('Unexpected token found during parsing: ', this.at());
-                //trick the compiler for TS
                 process.exit(1);
         }
     }

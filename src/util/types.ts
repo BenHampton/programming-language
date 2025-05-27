@@ -1,5 +1,6 @@
 export enum TokenType {
     //Lirerals
+    Null,
     Number,
     Identifier,
 
