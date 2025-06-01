@@ -1,4 +1,4 @@
-import  { Statement, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral } from './ast'
+import  { Statement, Program, Expr, BinaryExpr, NumericLiteral, Identifier } from './ast'
 import { Token, TokenType } from '../util/types'
 import { tokenize } from './lexer'
 
@@ -124,18 +124,11 @@ export default class Parser {
                     kind: 'Identifier', 
                     symbol: this.eat().value 
                 } as Identifier;
-            case TokenType.Null:
-                this.eat(); //advance past null KEYWORD
-                return { 
-                    kind: 'NullLiteral', 
-                    value: 'null'
-                } as NullLiteral;
             case TokenType.Number:
                 return { 
                     kind: 'NumericLiteral', 
                     value: parseFloat(this.eat().value),
                  } as NumericLiteral;
-
             case TokenType.OpenParen:
                 this.eat(); // eat the opening paren
                 const value = this.parseExpression();

@@ -1,9 +1,7 @@
 export enum TokenType {
-    //Lirerals
-    Null,
+    //Literals
     Number,
     Identifier,
-
     //Keywords
     Let,
 
