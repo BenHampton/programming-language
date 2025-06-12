@@ -1,6 +1,6 @@
-import  { Statement, Program, Expr, BinaryExpr, NumericLiteral, Identifier } from './ast'
-import { Token, TokenType } from '../util/types'
-import { tokenize } from './lexer'
+import {BinaryExpr, Expr, Identifier, NumericLiteral, Program, Statement, VariableDeclaration} from './ast'
+import {Token, TokenType} from '../util/types'
+import {tokenize} from './lexer'
 
 export default class Parser {
 
@@ -43,15 +43,58 @@ export default class Parser {
 
         //parse until end of file
         while (this.notEOF()) {
-            program.body.push(this.parseStatment());
+            program.body.push(this.parseStatement());
         }
         
         return program;
     }
 
-    private parseStatment(): Statement {
+    private parseStatement(): Statement {
         // skip to parseExpression
-        return this.parseExpression();
+        switch (this.at().type) {
+            case TokenType.Let:
+            case TokenType.Const:
+                return this.parse_variable_declaration();
+            default:
+                return this.parseExpression();
+        }
+    }
+
+    // LET IDENTIFIER
+    // (CONST | LET) IDENTIFIER = EXPR
+    private parse_variable_declaration(): Statement {
+        
+        const isConstant = this.eat().type == TokenType.Const;
+        const identifier = this.expect(
+            TokenType.Identifier, 
+            "Expected identifier name following let | const keywords.")
+            .value;
+        
+        if (this.at().type == TokenType.Semicolon) {
+            
+            this.eat(); //expect semicolon
+            if (isConstant) {
+                throw "Must assign value to constant expression. No value provided"
+            }
+            
+            return {
+                kind: "VariableDeclaration",
+                identifier,
+                constant: false,
+                value: undefined //do not need to pass this since it is inherited
+            } as VariableDeclaration
+        }
+        
+        this.expect(TokenType.Equals, "Expected equals token identifier in variable declaration.")
+        const declaration = {
+            kind: "VariableDeclaration",
+            value: this.parseExpression(),
+            constant: isConstant,
+            identifier,
+        } as VariableDeclaration;
+        
+        this.expect(TokenType.Semicolon, "Variable Declaration statement must end with semicolon.")
+        return declaration;
     }
 
         /*Order of Prescidence:

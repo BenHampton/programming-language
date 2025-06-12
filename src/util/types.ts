@@ -4,10 +4,12 @@ export enum TokenType {
     Identifier,
     //Keywords
     Let,
+    Const,
 
     //Groupings * Operators
     BinaryOperator,
     Equals,
+    Semicolon,
     OpenParen, 
     CloseParen,
     EOF, //signify End Of File

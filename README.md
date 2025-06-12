@@ -4,6 +4,6 @@ npm versions:
     - 10.2.4
 
 run Deno:  
-    - deno run -A lexer.ts
+    - deno run -A main.ts
 run Node:    
-    - ts-node src/lexer.ts
+    - ts-node src/main.ts

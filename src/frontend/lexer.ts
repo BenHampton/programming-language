@@ -25,9 +25,11 @@ export function tokenize (sourceCode: string): Token[] {
             tokens.push(token(src.shift(), TokenType.BinaryOperator))
         } else if (src[0] == '=' ) {
             tokens.push(token(src.shift(), TokenType.Equals))
-        } else {
+        } else if (src[0] == ';' ) {
+            tokens.push(token(src.shift(), TokenType.Semicolon))
+        }else {
 
-            //handle mutilcharacter tokens .ie '>='
+            //handle multi character tokens .ie '>='
 
             //build number token
             if (isInteger(src[0])) {
@@ -51,14 +53,14 @@ export function tokenize (sourceCode: string): Token[] {
                 if (typeof reserved === 'number') {
 					tokens.push(token(identifier, reserved));
 				} else {
-					// Unreconized name must mean user defined symbol.
+					// Unrecognized name must mean user defined symbol.
 					tokens.push(token(identifier, TokenType.Identifier));
 				}
             } else if (isSkippable(src[0])) {
                 //skip character
                 src.shift()
             } else {
-                console.log('unrecgonized character found in source: ', src[0])
+                console.log('Unrecognized character found in source: ', src[0])
                 // Deno.exit(1)
                 process.exit(1)
             }
