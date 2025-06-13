@@ -27,7 +27,7 @@ export default class Environment {
     public assignVar(varName: string, value: RuntimeVal): RuntimeVal {
         const env = this.resolve(varName);
         if (env.constants.has(varName)) {
-            throw `Can not resign variable ${varName} as its already defined as a constatn`
+            throw `Can not resign variable ${varName} as its already defined as a constant`
         }
         env.variables.set(varName, value)
         return value

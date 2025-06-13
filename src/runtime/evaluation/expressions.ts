@@ -1,5 +1,5 @@
 ﻿import {MK_NULL, NumberVal, RuntimeVal} from "../values";
-import {BinaryExpr, Identifier} from "../../frontend/ast";
+import {AssignmentExpression, BinaryExpr, Identifier} from "../../frontend/ast";
 import Environment from "../environments";
 import {evaluate} from "../interpreter";
 
@@ -41,5 +41,14 @@ export function evaluateBinaryExpression(binaryOperator: BinaryExpr, env: Enviro
 export function evaluateIdentifier(ident: Identifier, env: Environment): RuntimeVal {
     const val = env.lookUpVar(ident.symbol);
     return val;
+}
+
+export function evaluateAssignment(node: AssignmentExpression, env: Environment): RuntimeVal {
+    if (node.assignee.kind != 'Identifier') {
+        throw `Invalid left hand side assignment expression ${JSON.stringify(node.assignee)}.`;
+    }
+    
+    const varName = (node.assignee as Identifier).symbol
+    return env.assignVar(varName, evaluate(node.value, env));
 }
 

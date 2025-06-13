@@ -1,4 +1,13 @@
-import {BinaryExpr, Expr, Identifier, NumericLiteral, Program, Statement, VariableDeclaration} from './ast'
+import {
+    AssignmentExpression,
+    BinaryExpr,
+    Expr,
+    Identifier,
+    NumericLiteral,
+    Program,
+    Statement,
+    VariableDeclaration
+} from './ast'
 import {Token, TokenType} from '../util/types'
 import {tokenize} from './lexer'
 
@@ -104,27 +113,42 @@ export default class Parser {
         - LogicalExpr
         - ComparisionExpr
         - AdditiveExpr
-        - MiltiplicitaveExpr
+        - MultiplicativeExpr
         - UnaryExpr
         - PrimaryExpr
-    */
-
+    */    
     private parseExpression(): Expr {
-        return this.parseAdditiveExpression();
+        return this.parseAssignmentExpression()
+    }
+    
+    private parseAssignmentExpression(): Expr {
+        const left = this.parseAdditiveExpression(); //switch this out with Objects
+
+        if (this.at().type == TokenType.Equals) {
+            this.eat();
+            const value = this.parseAssignmentExpression()
+            return {
+                value,
+                assignee: left,
+                kind: 'AssignmentExpression',
+            } as AssignmentExpression;
+        }
+
+        return left;
     }
 
-    /* exmaples:
+    /* example:
         ( 10 + - 5 ) - 5
         ( 10 + ( 10 - fooBar() ) ) - 5 
     */
     private parseAdditiveExpression(): Expr {
-        //parse left hand side to support recursive prescidence
-        let left = this.parseMultipliciotaveExpression();
+        //parse left hand side to support recursive precedence
+        let left = this.parseMultiplicativeExpression();
 
         while (this.at().value == '+' || this.at().value == '-') {
 
             const operator = this.eat().value;
-            const right = this.parseMultipliciotaveExpression();
+            const right = this.parseMultiplicativeExpression();
 
             left = {
                 kind: 'BinaryExpr',
@@ -137,8 +161,8 @@ export default class Parser {
         return left;
     }
 
-    private parseMultipliciotaveExpression(): Expr {
-        //parse left hand side to support recursive prescidence
+    private parseMultiplicativeExpression(): Expr {
+        //parse left hand side to support recursive precedence
         let left = this.parsePrimaryExpression();
 
         while (this.at().value == '/' || this.at().value == '*' || this.at().value == '%') {

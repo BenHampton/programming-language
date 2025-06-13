@@ -5,6 +5,7 @@ export type NodeType =
 'VariableDeclaration' |
     
 //Expressions
+"AssignmentExpression" |
 'NumericLiteral' | 
 'Identifier' |
 'BinaryExpr' | 
@@ -13,7 +14,7 @@ export type NodeType =
 'FunctionDeclaration';
 
 
-//statments will not return a value
+//statements will not return a value
 export interface Statement {
     kind: NodeType,
 }
@@ -32,6 +33,14 @@ export interface VariableDeclaration extends Statement {
 
 //extends Statement
 export interface Expr extends Statement {
+}
+
+// let x = { foo: "bAR" }
+// x.foo = "foo bar" -> member expression
+export interface AssignmentExpression extends Expr {
+    kind: 'AssignmentExpression',
+    assignee: Expr,
+    value: Expr,
 }
 
 export interface BinaryExpr extends Expr {

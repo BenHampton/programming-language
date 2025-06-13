@@ -1,5 +1,6 @@
 import {RuntimeVal, NumberVal} from './values'
 import {
+    AssignmentExpression,
     BinaryExpr,
     Identifier,
     NumericLiteral,
@@ -8,7 +9,7 @@ import {
     VariableDeclaration
 } from '../frontend/ast'
 import Environment from "./environments";
-import {evaluateBinaryExpression, evaluateIdentifier} from "./evaluation/expressions";
+import {evaluateAssignment, evaluateBinaryExpression, evaluateIdentifier} from "./evaluation/expressions";
 import {evaluateProgram, evaluateVariableDeclaration} from "./evaluation/statments";
 
 export function evaluate(astNode: Statement, env: Environment): RuntimeVal {
@@ -23,6 +24,8 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeVal {
             return evaluateIdentifier(astNode as Identifier, env)
         case 'BinaryExpr':
             return evaluateBinaryExpression(astNode as BinaryExpr, env);
+        case 'AssignmentExpression':
+            return evaluateAssignment(astNode as AssignmentExpression, env)
         case 'Program':
             return evaluateProgram(astNode as Program, env);
             

@@ -17,10 +17,9 @@ async function main() {
 
         const parser = new Parser();
         const env = new Environment()
-        env.declareVar('x', MK_NUMBER(100), false)
-        env.declareVar('true', MK_BOOLEAN(true), false)
-        env.declareVar('false', MK_BOOLEAN(false), false)
-        env.declareVar('null', MK_NULL(), false)
+        env.declareVar('true', MK_BOOLEAN(true), true)
+        env.declareVar('false', MK_BOOLEAN(false), true)
+        env.declareVar('null', MK_NULL(), true)
 
         console.log('\nU-DirtyBit v0.1')
         let i = 0
