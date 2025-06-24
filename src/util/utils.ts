@@ -15,5 +15,5 @@ export function isInteger(src: string) {
 }
 
 export function isSkippable(str: string) {
-    return str == ' ' || str == '\n' || str == '\t'
+    return str == ' ' || str == '\n' || str == '\t' || str == '\r';
 }

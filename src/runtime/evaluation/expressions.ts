@@ -4,7 +4,7 @@ import Environment from "../environments";
 import {evaluate} from "../interpreter";
 
 export function evaluateNumericBinaryExpression(leftHandSide: NumberVal, rightHandSide: NumberVal, operator: string): NumberVal {
-    console.log('op', operator)
+    // console.log('op', operator)
     let result: number = 0;
     if (operator === '+')
         result = leftHandSide.value + rightHandSide.value

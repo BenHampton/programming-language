@@ -1,4 +1,11 @@
-import { RuntimeVal } from "./values";
+import {MK_BOOLEAN, MK_NULL, RuntimeVal} from "./values";
+
+function setUpScope(env: Environment) {
+    // create Default global environments
+    env.declareVar('true', MK_BOOLEAN(true), true)
+    env.declareVar('false', MK_BOOLEAN(false), true)
+    env.declareVar('null', MK_NULL(), true)
+}
 
 export default class Environment {
     private parent?: Environment;
@@ -6,9 +13,14 @@ export default class Environment {
     private constants: Set<string>;
 
     constructor(parentENV?: Environment) {
+        const global = parentENV ? true : false;
         this.parent = parentENV;
         this.variables = new Map();
         this.constants = new Set();
+        
+        if (global) {
+            setUpScope(this);
+        }
     }
 
     public declareVar(varName: string, value: RuntimeVal, isConstant: boolean): RuntimeVal {
