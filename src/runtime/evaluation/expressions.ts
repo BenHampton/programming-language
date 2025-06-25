@@ -1,5 +1,5 @@
-﻿import {MK_NULL, NumberVal, RuntimeVal} from "../values";
-import {AssignmentExpression, BinaryExpr, Identifier} from "../../frontend/ast";
+﻿import {MK_NULL, NumberVal, ObjectVal, RuntimeVal} from "../values";
+import {AssignmentExpression, BinaryExpr, Identifier, ObjectLiteral} from "../../frontend/ast";
 import Environment from "../environments";
 import {evaluate} from "../interpreter";
 
@@ -52,3 +52,18 @@ export function evaluateAssignment(node: AssignmentExpression, env: Environment)
     return env.assignVar(varName, evaluate(node.value, env));
 }
 
+export function evaluateObjectExpression(obj: ObjectLiteral, env: Environment): RuntimeVal {
+    
+    const object = { type: 'object', properties: new Map() } as ObjectVal;
+    
+    for (const { key, value } of obj.properties) {
+        
+        //handles valid key: pair
+        
+        //shorthand -> { foo } === { foo: foo }
+        const runtimeVal = ( value == undefined ) ? env.lookUpVar(key) : evaluate(value, env);
+        object.properties.set(key, runtimeVal)
+    }
+    
+    return object;
+}

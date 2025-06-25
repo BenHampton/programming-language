@@ -3,13 +3,18 @@ import {
     AssignmentExpression,
     BinaryExpr,
     Identifier,
-    NumericLiteral,
+    NumericLiteral, ObjectLiteral,
     Program,
     Statement,
     VariableDeclaration
 } from '../frontend/ast'
 import Environment from "./environments";
-import {evaluateAssignment, evaluateBinaryExpression, evaluateIdentifier} from "./evaluation/expressions";
+import {
+    evaluateAssignment,
+    evaluateBinaryExpression,
+    evaluateIdentifier,
+    evaluateObjectExpression
+} from "./evaluation/expressions";
 import {evaluateProgram, evaluateVariableDeclaration} from "./evaluation/statments";
 
 export function evaluate(astNode: Statement, env: Environment): RuntimeVal {
@@ -22,6 +27,8 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeVal {
                 } as NumberVal;
         case 'Identifier':
             return evaluateIdentifier(astNode as Identifier, env)
+        case 'ObjectLiteral':
+            return evaluateObjectExpression(astNode as ObjectLiteral, env)
         case 'BinaryExpr':
             return evaluateBinaryExpression(astNode as BinaryExpr, env);
         case 'AssignmentExpression':
@@ -35,8 +42,6 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeVal {
         default:
             console.error('This AST Node has not been setup for interpretation. ', astNode)
             process.exit(1)
-        // case 'NullLiteral':
-        // case 'BinaryExpr':
         // case 'CallExpr':
         // case 'UnaryExpr':
         // case 'FunctionDeclaration':

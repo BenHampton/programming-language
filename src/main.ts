@@ -2,7 +2,7 @@ import Parser from './frontend/parser';
 import { evaluate } from './runtime/interpreter';
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
-import Environment from "./runtime/environments";
+import Environment, {createGlobalEnvironment} from "./runtime/environments";
 const util = require('util');
 import { promises as fsPromises } from 'fs';
 
@@ -17,7 +17,7 @@ async function main(isTerminal: boolean) {
     try {
 
         const parser = new Parser();
-        const env = new Environment()
+        const env = createGlobalEnvironment();
         
 
         console.log('\nU-DirtyBit v0.1' + 'isTerminal: ' + isTerminal)
