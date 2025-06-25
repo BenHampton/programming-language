@@ -5,7 +5,9 @@ export type NodeType =
 'VariableDeclaration' |
     
 //Expressions
-"AssignmentExpression" |
+'AssignmentExpression' |
+'MemberExpression' |
+'CallExpression' |
     
 //Literals
 'Property' |
@@ -52,6 +54,25 @@ export interface BinaryExpr extends Expr {
     left: Expr;
     right: Expr;
     operator: string;
+}
+
+//foo() -> caller
+// foo.bar() -> member expression is the caller itself
+export interface CallExpr extends Expr {
+    kind: 'CallExpression'
+    args: Expr[]
+    caller: Expr;
+    
+}
+
+// member expression contains the object and the property
+// foo.bar() === for['bar']()
+// for['bar']() -> computed expression
+export interface MemberExpr extends Expr {
+    kind: 'MemberExpression'
+    object: Expr;
+    property: Expr;
+    computed: boolean;
 }
 
 export interface Identifier extends Expr {

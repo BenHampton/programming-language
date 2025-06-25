@@ -6,5 +6,8 @@ const obj = {
     foo,
     complex: {
         bar: true,
-    }
+    },
 };
+
+print(45 / 2 + x, foo)
+foo = obj.foo() + 5

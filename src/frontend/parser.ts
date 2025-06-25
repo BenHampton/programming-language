@@ -1,8 +1,9 @@
 import {
     AssignmentExpression,
     BinaryExpr,
+    CallExpr,
     Expr,
-    Identifier,
+    Identifier, MemberExpr,
     NumericLiteral,
     ObjectLiteral,
     Program,
@@ -65,7 +66,7 @@ export default class Parser {
         switch (this.at().type) {
             case TokenType.Let:
             case TokenType.Const:
-                return this.parse_variable_declaration();
+                return this.parseVariableDeclaration();
             default:
                 return this.parseExpression();
         }
@@ -73,7 +74,7 @@ export default class Parser {
 
     // LET IDENTIFIER
     // (CONST | LET) IDENTIFIER = EXPR
-    private parse_variable_declaration(): Statement {
+    private parseVariableDeclaration(): Statement {
         
         const isConstant = this.eat().type == TokenType.Const;
         const identifier = this.expect(
@@ -108,16 +109,20 @@ export default class Parser {
         return declaration;
     }
 
-        /*Order of Prescidence:
-        - AssignmentExpr
-        - MemberExpr
-        - FunctionCall
-        - LogicalExpr
-        - ComparisionExpr
-        - AdditiveExpr
-        - MultiplicativeExpr
-        - UnaryExpr
-        - PrimaryExpr
+    /*Order of Prescidence:
+    - AssignmentExpr
+    - Object
+    - MultiplicativeExpr
+    - Call
+    - Member
+    - PrimaryExpr
+    -
+    - unset below?
+    -
+    - LogicalExpr
+    - ComparisionExpr
+    - AdditiveExpr
+    - UnaryExpr
     */    
     private parseExpression(): Expr {
         return this.parseAssignmentExpression()
@@ -222,12 +227,12 @@ export default class Parser {
 
     private parseMultiplicativeExpression(): Expr {
         //parse left hand side to support recursive precedence
-        let left = this.parsePrimaryExpression();
+        let left = this.parseCallMemberExpression();
 
         while (this.at().value == '/' || this.at().value == '*' || this.at().value == '%') {
 
             const operator = this.eat().value;
-            const right = this.parsePrimaryExpression();
+            const right = this.parseCallMemberExpression();
 
             left = {
                 kind: 'BinaryExpr',
@@ -239,7 +244,91 @@ export default class Parser {
 
         return left;
     }
+    
+    // foo.x ()
+    // reason to parse a member is to get rid of 'foo.x' and then check for Left Paren
+    private parseCallMemberExpression(): Expr {
+        const member = this.parseMemberExpression();
+        
+        if (this.at().type == TokenType.OpenParen) {
+            return this.parseCallExpression(member);
+        }
+        
+        return member;
+    }
 
+    private parseCallExpression(caller: Expr): Expr {
+        
+        let callExpr: Expr = {
+            kind: 'CallExpression',
+            caller,
+            args: this.parseArgs()
+        } as CallExpr;
+        
+        if ( this.at().type == TokenType.OpenParen) {
+            callExpr = this.parseCallExpression(callExpr);
+        }
+        
+        return callExpr;
+    }
+
+    //fn add (x,y) {} => 'x' and 'y' are the arguments
+    private parseArgs(): Expr[] {
+        this.expect(TokenType.OpenParen, 'Expected open parenthesis');
+        
+        const args = this.at().type == TokenType.CloseParen ? [] : this.parseArgumentsList()
+        
+        this.expect(TokenType.CloseParen, 'Missing closing parenthesis inside arguments list');
+        return args;
+    }
+
+    private parseArgumentsList(): Expr[] {
+        const args = [this.parseAssignmentExpression()];
+        
+        while (this.at().type == TokenType.Comma && this.eat()) {
+            args.push(this.parseAssignmentExpression());
+        }
+        
+        return args;
+    }
+
+    private parseMemberExpression(): Expr {
+        
+        let object = this.parsePrimaryExpression()
+        
+        while (this.at().type == TokenType.Dot || this.at().type == TokenType.OpenBracket) {
+            
+            const operator = this.eat();
+            
+            let property: Expr;
+            let computed: boolean;
+            
+            //non-computed values aka object.expr
+            if ( operator.type == TokenType.Dot ) {
+                computed = false
+                //get identifier
+                property = this.parsePrimaryExpression()
+                
+                if (property.kind != 'Identifier') {
+                    throw 'Cannot use dor operator without right hand side being and identifier'
+                }
+            } else { //this allows chaining -> obj[computedValue]
+                computed = true;
+                property = this.parseExpression();
+                this.expect(TokenType.CloseBracket, 'Missing closing bracket in computed value.');
+            }
+
+            object = {
+                kind: 'MemberExpression',
+                object,
+                property,
+                computed
+            } as MemberExpr
+        }
+        
+        return object;
+    }
+    
     private parsePrimaryExpression(): Expr {
 
         const tk = this.at().type;

@@ -10,12 +10,15 @@ export enum TokenType {
     BinaryOperator,
     Equals,
     Comma,
+    Dot,
     Colon,
     Semicolon,
     OpenParen, 
     CloseParen,
     OpenBrace,
     CloseBrace,
+    OpenBracket,
+    CloseBracket,
     EOF, //signify End Of File
 }
 
