@@ -43,9 +43,9 @@ async function main(isTerminal: boolean) {
 
             const input = await fsPromises.readFile('src/testFile/test.txt', 'utf8');
             const program = parser.produceAST(input);
-            console.log(util.inspect(program, { depth: null, colors: true }));
+            // console.log(util.inspect(program, { depth: null, colors: true }));
             const result = evaluate(program, env)
-            console.log(util.inspect(result, { depth: null, colors: true})); // depth: null shows full depth
+            // console.log(util.inspect(result, { depth: null, colors: true})); // depth: null shows full depth
         }
        
 

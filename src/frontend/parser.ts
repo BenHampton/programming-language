@@ -1,9 +1,10 @@
 import {
     AssignmentExpression,
     BinaryExpr,
-    CallExpr,
+    CallExpression,
     Expr,
-    Identifier, MemberExpr,
+    Identifier,
+    MemberExpr,
     NumericLiteral,
     ObjectLiteral,
     Program,
@@ -263,7 +264,7 @@ export default class Parser {
             kind: 'CallExpression',
             caller,
             args: this.parseArgs()
-        } as CallExpr;
+        } as CallExpression;
         
         if ( this.at().type == TokenType.OpenParen) {
             callExpr = this.parseCallExpression(callExpr);

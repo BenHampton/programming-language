@@ -14,8 +14,7 @@ export type NodeType =
 'ObjectLiteral' |    
 'NumericLiteral' | 
 'Identifier' |
-'BinaryExpr' | 
-'CallExpr' | 
+'BinaryExpr' |
 'UnaryExpr' | 
 'FunctionDeclaration';
 
@@ -58,7 +57,7 @@ export interface BinaryExpr extends Expr {
 
 //foo() -> caller
 // foo.bar() -> member expression is the caller itself
-export interface CallExpr extends Expr {
+export interface CallExpression extends Expr {
     kind: 'CallExpression'
     args: Expr[]
     caller: Expr;

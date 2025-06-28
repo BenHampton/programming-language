@@ -1,4 +1,4 @@
-import {MK_BOOLEAN, MK_NULL, RuntimeVal} from "./values";
+import {MK_BOOLEAN, MK_NATIVE_FN, MK_NULL, MK_NUMBER, RuntimeVal} from "./values";
 
 export function createGlobalEnvironment() {
     const env = new Environment();
@@ -6,6 +6,19 @@ export function createGlobalEnvironment() {
     env.declareVar('true', MK_BOOLEAN(true), true)
     env.declareVar('false', MK_BOOLEAN(false), true)
     env.declareVar('null', MK_NULL(), true)
+
+    //define a native method
+    env.declareVar(
+        'print',
+        MK_NATIVE_FN((args, scope) => {
+            console.log(...args);
+            return MK_NULL();
+    }), true);
+
+    function timeFunction (_args: RuntimeVal[], _env: Environment) {
+        return MK_NUMBER(Date.now())
+    }
+    env.declareVar('time', MK_NATIVE_FN(timeFunction), true);
     
     return env;
 }

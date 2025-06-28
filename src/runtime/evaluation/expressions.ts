@@ -1,5 +1,5 @@
-﻿import {MK_NULL, NumberVal, ObjectVal, RuntimeVal} from "../values";
-import {AssignmentExpression, BinaryExpr, Identifier, ObjectLiteral} from "../../frontend/ast";
+﻿import {MK_NULL, NativeFunctionValue, NumberVal, ObjectVal, RuntimeVal} from "../values";
+import {AssignmentExpression, BinaryExpr, CallExpression, Expr, Identifier, ObjectLiteral} from "../../frontend/ast";
 import Environment from "../environments";
 import {evaluate} from "../interpreter";
 
@@ -66,4 +66,18 @@ export function evaluateObjectExpression(obj: ObjectLiteral, env: Environment): 
     }
     
     return object;
+}
+
+export function evaluateCallExpression(callExpr: CallExpression, env: Environment): RuntimeVal {
+
+    const args = callExpr.args.map((arg) => evaluate(arg, env));
+    const fn = evaluate(callExpr.caller, env);
+
+    if (fn.type !== 'native-fn') {
+        throw 'Cannot call value that is not a function: ' + JSON.stringify(fn)
+    }
+
+    const result = (fn as NativeFunctionValue).call(args, env)
+
+    return result;
 }
