@@ -1,11 +1,13 @@
 import Environment from "./environments";
+import {Statement} from "../frontend/ast";
 
 export type ValueType =
 'null' | 
 'number' |
 'boolean' |
 'object' |
-'native-fn';
+'native-fn' | 
+'function';
 
 export interface RuntimeVal {
     type: ValueType;
@@ -55,4 +57,12 @@ export function MK_NATIVE_FN(call: FunctionCall) {
         type: 'native-fn',
         call: call
     } as NativeFunctionValue
+}
+
+export interface FunctionValue extends RuntimeVal {
+    type: 'function';
+    name: string;
+    parameters: string[];
+    declarationEnv: Environment;
+    body: Statement[];
 }

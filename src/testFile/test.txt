@@ -1,5 +1,7 @@
-let foo = 5 * 2;
-foo = foo / 4 + 5
+fn andrewsOld (old, veryOld) {
 
-const timeNow = time();
-print(timeNow)
+   old * veryOld
+}
+
+const ajsAge = andrewsOld(23, 3);
+print(ajsAge)

@@ -20,7 +20,8 @@ async function main(isTerminal: boolean) {
         const env = createGlobalEnvironment();
         
 
-        console.log('\nU-DirtyBit v0.1' + 'isTerminal: ' + isTerminal)
+        const mode = isTerminal ? 'Terminal' : 'Test File';
+        console.log('\nU-DirtyBit v0.1\n' + 'mode: ' + mode)
         if (isTerminal) {
             let i = 0
             while (true) {

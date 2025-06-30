@@ -5,6 +5,7 @@ export enum TokenType {
     //Keywords
     Let,
     Const,
+    Fn,
 
     //Groupings * Operators
     BinaryOperator,

@@ -2,7 +2,7 @@ import {RuntimeVal, NumberVal} from './values'
 import {
     AssignmentExpression,
     BinaryExpr,
-    CallExpression,
+    CallExpression, FunctionDeclaration,
     Identifier,
     NumericLiteral, ObjectLiteral,
     Program,
@@ -17,7 +17,7 @@ import {
     evaluateIdentifier,
     evaluateObjectExpression
 } from "./evaluation/expressions";
-import {evaluateProgram, evaluateVariableDeclaration} from "./evaluation/statments";
+import {evaluateFunctionDeclaration, evaluateProgram, evaluateVariableDeclaration} from "./evaluation/statments";
 
 export function evaluate(astNode: Statement, env: Environment): RuntimeVal {
 
@@ -39,10 +39,11 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeVal {
             return evaluateAssignment(astNode as AssignmentExpression, env)
         case 'Program':
             return evaluateProgram(astNode as Program, env);
-            
-            // handle statements
+        // handle statements
         case 'VariableDeclaration':
             return evaluateVariableDeclaration(astNode as VariableDeclaration, env);
+        case 'FunctionDeclaration':
+            return evaluateFunctionDeclaration(astNode as FunctionDeclaration, env);
         default:
             console.error('This AST Node has not been setup for interpretation. ', astNode)
             process.exit(1)

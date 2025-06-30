@@ -3,6 +3,7 @@ export type NodeType =
 //Statments
 'Program' |
 'VariableDeclaration' |
+'FunctionDeclaration' |
     
 //Expressions
 'AssignmentExpression' |
@@ -15,8 +16,7 @@ export type NodeType =
 'NumericLiteral' | 
 'Identifier' |
 'BinaryExpr' |
-'UnaryExpr' | 
-'FunctionDeclaration';
+'UnaryExpr';
 
 
 //statements will not return a value
@@ -34,6 +34,13 @@ export interface VariableDeclaration extends Statement {
     constant: boolean,
     identifier: string,
     value?: Expr
+}
+
+export interface FunctionDeclaration extends Statement {
+    kind: 'FunctionDeclaration';
+    parameters: string[],
+    name: string,
+    body: Statement[];
 }
 
 //extends Statement
